@@ -212,4 +212,54 @@ router.post("/unset-complete", isLoggedIn, async (req, res) => {
   }
 });
 
+router.post("/set-date", isLoggedIn, async (req, res) => {
+  try {
+    const con = await mysql.createConnection(mysqlConfig);
+
+    const [result] = await con.execute(
+      `UPDATE todos SET todos.due_date='${
+        req.body.due_date
+      }' WHERE todos.id = ${Number(
+        mysql.escape(req.body.id)
+      )} AND todos.user_id = ${req.user.id}`
+    );
+
+    con.end();
+
+    return res.status(200).send(result);
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ error: "An unexpected error occured. Please try again later" });
+  }
+});
+
+router.post("/delete", isLoggedIn, (req, res) => {
+  if (!req.body.id) {
+    return res.status(400).send({ error: "Incorrect data passed" });
+  }
+
+  try {
+    const con = await mysql.createConnection(mysqlConfig);
+
+    const [result] = await con.execute(
+      `DELETE FROM todos WHERE todos.id = ${req.body.id} AND todos.user_id = ${req.user.id}`
+    );
+
+    if (result.affectedRows !== 1) {
+      return res.status(500).send({
+        error: "An unexpected error occurred. Please try again later",
+      });
+    }
+
+    return res.send({ status: "Post deleted" });
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ error: "An unexpected error occurred. Please try again later" });
+  }
+});
+
 module.exports = router;
