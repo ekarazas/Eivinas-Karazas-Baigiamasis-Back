@@ -8,6 +8,7 @@ module.exports = {
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DB,
     port: process.env.MYSQL_PORT,
+    timezone: "Z",
   },
   jwtSecretKey: process.env.JWT_SECRET_KEY,
 };

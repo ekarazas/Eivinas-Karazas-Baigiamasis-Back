@@ -1,4 +1,7 @@
+const jwt = require("jsonwebtoken");
 const Joi = require("joi");
+
+const { jwtSecretKey } = require("./config");
 
 const userSchema = Joi.object({
   first_name: Joi.string().min(2).max(255).trim(),
@@ -7,6 +10,16 @@ const userSchema = Joi.object({
 });
 
 module.exports = {
+  isLoggedIn(req, res, next) {
+    try {
+      const token = req.headers.authorization.split(" ")[1];
+      const decodedToken = jwt.verify(token, jwtSecretKey);
+      req.user = decodedToken;
+      return next();
+    } catch (err) {
+      return res.status(400).send({ error: "Unauthorized access to site" });
+    }
+  },
   async isAuthDataCorrect(req, res, next) {
     let userData;
     try {
