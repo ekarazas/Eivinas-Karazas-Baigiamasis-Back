@@ -62,7 +62,8 @@ router.post("/login", isAuthDataCorrect, async (req, res) => {
 
     const token = jwt.sign(
       { id: data[0].id, email: data[0].email },
-      jwtSecretKey
+      jwtSecretKey,
+      { expiresIn: 60 * 60 }
     );
 
     return res.send({ message: "You have successfully logged in", token });

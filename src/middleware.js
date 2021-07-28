@@ -17,7 +17,9 @@ module.exports = {
       req.user = decodedToken;
       return next();
     } catch (err) {
-      return res.status(400).send({ error: "Unauthorized access to site" });
+      return res
+        .status(400)
+        .send({ error: "Unauthorized access to site. Please Login" });
     }
   },
   async isAuthDataCorrect(req, res, next) {
